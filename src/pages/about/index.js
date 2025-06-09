@@ -1,11 +1,13 @@
 import React from "react";
-import { Navbar } from "../../components";
+import { Navbar, Button, Footer } from "../../components";
 const About = () => {
   return (
     <div>
+      <Navbar activePage="About" />
       <h1>About Page</h1>
-       <hr />
-<Navbar />
+      <hr />
+      <Button title="Log In" borderRadius={true} color="blue" />
+      <Footer />
     </div>
   );
 };
