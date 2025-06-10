@@ -1,12 +1,12 @@
 import React from "react";
-import { Navbar, Button ,Footer} from "../../components";
+import { Navbar, Button, Footer, Layout } from "../../components";
 const Home = () => {
   const loginHandler = () => {
     alert("log in function");
   };
   return (
-    <div>
-      <Navbar activePage="Home" />
+    <Layout>
+      {/* <Navbar activePage="Home" /> */}
       <h1>Home Page</h1>
       <hr />
       <Button title="Log In" onClick={loginHandler} />
@@ -20,8 +20,7 @@ const Home = () => {
       <Button title="Log Out" />
       <Button title="Delete" color="yellow" />
       <Button />
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 export default Home;
