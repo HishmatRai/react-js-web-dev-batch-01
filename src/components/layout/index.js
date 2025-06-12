@@ -1,10 +1,10 @@
 import React from "react";
 import Navbar from "../navbar";
 import Footer from "../footer";
-const Layout = ({ children }) => {
+const Layout = ({ children,activePage }) => {
   return (
     <div>
-      <Navbar  activePage="fsdf"/>
+      <Navbar  activePage={activePage}/>
       {children}
       <Footer />
     </div>

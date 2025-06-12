@@ -1,5 +1,12 @@
 import React from "react";
-import { Home, About, Contact, Login, PageNotFound } from "../../pages";
+import {
+  Home,
+  About,
+  Contact,
+  Login,
+  PageNotFound,
+  NewsDetails,
+} from "../../pages";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 const RouterNavigation = () => {
   return (
@@ -9,6 +16,7 @@ const RouterNavigation = () => {
         <Route path="/about-us" element={<About />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/news-details/:id" element={<NewsDetails />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
