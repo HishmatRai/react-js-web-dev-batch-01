@@ -1,63 +1,37 @@
-import React, { useState } from "react";
-import { Navbar, Footer, Button, Input ,Layout} from "../../components";
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("");
-  const re =
-    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-  const loginHandler = () => {
-    setMessageType("error");
-    setTimeout(() => {
-      setMessage("");
-    }, 2000);
-    if (email === "") {
-      setMessage("Email required!");
-    } else if (!email.match(re)) {
-      setMessage("Enter valid email address");
-    } else if (password === "") {
-      setMessage("Password Required");
-    } else {
-      const user = {
-        email: email,
-        password: password,
-      };
-      setMessage("Success");
-      setMessageType("success");
-      setEmail("");
-      setPassword("");
-      console.log("user", user);
-    }
-  };
+import React from "react";
+import { Link } from "react-router-dom";
+import "./index.css";
+// const preventRefresh = (e) => {
+//   e.preventDefault();
+// };
+
+export default function Login() {
   return (
-    <Layout>
-      {/* <Navbar activePage="Login" /> */}
-      <h1>Login Page</h1>
-      <hr />
-      <Input
-        type="email"
-        placeholder="Email Address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button
-        title="Log In"
-        onClick={loginHandler}
-        color="blue"
-        borderRadius={true}
-      />
-      <p style={{ color: messageType === "error" ? "red" : "green" }}>
-        {message}
-      </p>
-      {/* <Footer /> */}
-    </Layout>
+    <div className="form-container">
+      <div className="wrapper signIn">
+        <div className="illustration">
+          <img src="https://img.freepik.com/premium-vector/secure-login-form-page-with-password-computer-padlock-3d-vector-icon-cartoon-minimal-style_365941-1119.jpg?semt=ais_hybrid&w=740" alt="illustration" />
+        </div>
+        <div className="form">
+          <div className="heading">LOGIN</div>
+          <form>
+            <div>
+              <label htmlFor="name">Name</label>
+              <input type="text" id="name" placeholder="Enter your name" />
+            </div>
+            <div>
+              <label htmlFor="e-mail">E-Mail</label>
+              <input type="email" id="e-mail" placeholder="Enter you mail" />
+            </div>
+            <button >
+              Submit
+            </button>
+          </form>
+          <p>
+            Don't have an account ? <Link to="/signup"> Sign Up </Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
-};
-export default Login;
+}
