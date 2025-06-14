@@ -1,2 +1,3 @@
 import RouterNavigation from "./router-navigation";
-export { RouterNavigation };
+import firebase from "./firebase-config";
+export { RouterNavigation, firebase };

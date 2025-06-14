@@ -1,5 +1,11 @@
 import React from "react";
-import { Home, Login, PageNotFound, Signup } from "../../pages";
+import {
+  Home,
+  Login,
+  PageNotFound,
+  Signup,
+  EmailVerification,
+} from "../../pages";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 const RouterNavigation = () => {
   return (
@@ -8,6 +14,7 @@ const RouterNavigation = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

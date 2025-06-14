@@ -1,7 +1,14 @@
 import React from "react";
 import { RouterNavigation } from "./config";
-import './App.css'
+import { ToastContainer } from "react-toastify";
+
+import "./App.css";
 const App = () => {
-  return <RouterNavigation />;
+  return (
+    <div>
+      <ToastContainer />
+      <RouterNavigation />
+    </div>
+  );
 };
 export default App;
