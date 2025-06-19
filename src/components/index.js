@@ -1,2 +1,3 @@
 import Navbar from "./navbar";
-export { Navbar };
+import LinearProgressWithLabel from "./progress-with-label";
+export { Navbar, LinearProgressWithLabel };

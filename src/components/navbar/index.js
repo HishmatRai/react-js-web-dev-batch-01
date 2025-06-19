@@ -14,19 +14,25 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Dashboard","Create Blog", "Logout"];
+import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
+const settings = ["Profile", "Dashboard", "Create Blog", "Logout"];
 function Navbar() {
   const auth = getAuth();
+  const db = getFirestore()
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
+  const [profileURL, setProfileURL] = useState("");
+  const [name,setName] = useState("")
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLogin(true);
+        const userData = onSnapshot(doc(db, "users", user.uid), (doc) => {
+          setName(doc.data().name);
+          setProfileURL(doc.data().profileURL);
+        });
       } else {
         setIsLogin(false);
       }
@@ -47,6 +53,8 @@ function Navbar() {
     setAnchorElUser(null);
     if (setting === "Logout") {
       signOut(auth);
+    } else if (setting === "Profile") {
+      navigate("/profile");
     }
   };
 
@@ -61,7 +69,7 @@ function Navbar() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+           onClick={()=> navigate("/")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -143,7 +151,7 @@ function Navbar() {
             {isLogin ? (
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={name} src={profileURL} />
                 </IconButton>
               </Tooltip>
             ) : (

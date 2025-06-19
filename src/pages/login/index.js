@@ -3,13 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import "./index.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 export default function Login() {
   const auth = getAuth();
+  const db = getFirestore();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoader, setGoogleLoader] = useState(false);
   const loginHandler = () => {
     if (email === "") {
       toast("Email required", { type: "error" });
@@ -35,6 +43,37 @@ export default function Login() {
           setLoading(false);
         });
     }
+  };
+  // loginwithGoogleHandler
+  const loginwithGoogleHandler = () => {
+    setGoogleLoader(true);
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        const userData = onSnapshot(
+          doc(db, "users", user.uid),
+          async (userRes) => {
+            if (!userRes.data()) {
+              await setDoc(doc(db, "users", user.uid), {
+                name: user.displayName,
+                email: user.email,
+              });
+            }
+            console.log("Current data: ");
+          }
+        );
+
+        // console.log("user", user);
+        toast("Signed in", { type: "success" });
+        setGoogleLoader(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        toast(errorMessage, { type: "error" });
+        setGoogleLoader(false);
+      });
   };
   return (
     <div className="form-container">
@@ -70,6 +109,13 @@ export default function Login() {
               <CircularProgress style={{ color: "white" }} size={20} />
             ) : (
               "Log In"
+            )}
+          </button>
+          <button onClick={loginwithGoogleHandler}>
+            {googleLoader ? (
+              <CircularProgress style={{ color: "white" }} size={20} />
+            ) : (
+              "Login with Google"
             )}
           </button>
           <p>
