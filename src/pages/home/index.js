@@ -1,10 +1,32 @@
-import React from "react";
-import { Navbar } from "../../components";
+import React, { useEffect, useState } from "react";
+import { Navbar, Card } from "../../components";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  getFirestore,
+} from "firebase/firestore";
+
 const Home = () => {
+  const db = getFirestore();
+  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState([]);
+  useEffect(() => {
+    const q = query(collection(db, "blogs"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newBlogs = [];
+      querySnapshot.forEach((doc) => {
+        newBlogs.push(doc.data());
+      });
+      setBlogs([...newBlogs]);
+      setLoading(false);
+    });
+  }, []);
   return (
     <div>
       <Navbar />
-      <h1>Home Page</h1>
+      <Card data={blogs} loading={loading} />
     </div>
   );
 };

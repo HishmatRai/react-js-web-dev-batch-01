@@ -18,11 +18,11 @@ import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
 const settings = ["Profile", "Dashboard", "Create Blog", "Logout"];
 function Navbar() {
   const auth = getAuth();
-  const db = getFirestore()
+  const db = getFirestore();
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [profileURL, setProfileURL] = useState("");
-  const [name,setName] = useState("")
+  const [name, setName] = useState("");
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   useEffect(() => {
@@ -55,6 +55,8 @@ function Navbar() {
       signOut(auth);
     } else if (setting === "Profile") {
       navigate("/profile");
+    } else if (setting === "Create Blog") {
+      navigate("/create-blog");
     }
   };
 
@@ -69,7 +71,7 @@ function Navbar() {
             variant="h6"
             noWrap
             component="a"
-           onClick={()=> navigate("/")}
+            onClick={() => navigate("/")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },

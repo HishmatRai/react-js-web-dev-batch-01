@@ -6,6 +6,7 @@ import {
   Signup,
   EmailVerification,
   Profile,
+  CreateBlog,
 } from "../../pages";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 const RouterNavigation = () => {
@@ -17,6 +18,7 @@ const RouterNavigation = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/create-blog" element={<CreateBlog />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

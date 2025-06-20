@@ -4,4 +4,13 @@ import Signup from "./sign-up";
 import PageNotFound from "./page-not-found";
 import EmailVerification from "./email-verification";
 import Profile from "./profile";
-export { Home, Login, PageNotFound, Signup, EmailVerification, Profile };
+import CreateBlog from "./create-blog";
+export {
+  Home,
+  Login,
+  PageNotFound,
+  Signup,
+  EmailVerification,
+  Profile,
+  CreateBlog,
+};
