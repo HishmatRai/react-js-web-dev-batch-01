@@ -1,0 +1,27 @@
+.title {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-weight: 500 !important;
+}
+.details{
+      overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+.card-footer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.footer-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.footer-box>p{
+    margin-left: 5px;
+}

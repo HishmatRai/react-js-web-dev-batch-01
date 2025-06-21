@@ -5,6 +5,7 @@ import PageNotFound from "./page-not-found";
 import EmailVerification from "./email-verification";
 import Profile from "./profile";
 import CreateBlog from "./create-blog";
+import Dashboard from "./dashboard";
 export {
   Home,
   Login,
@@ -13,4 +14,5 @@ export {
   EmailVerification,
   Profile,
   CreateBlog,
+  Dashboard,
 };

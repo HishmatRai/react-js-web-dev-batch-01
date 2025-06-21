@@ -57,6 +57,8 @@ function Navbar() {
       navigate("/profile");
     } else if (setting === "Create Blog") {
       navigate("/create-blog");
+    } else {
+      navigate("/dashboard");
     }
   };
 

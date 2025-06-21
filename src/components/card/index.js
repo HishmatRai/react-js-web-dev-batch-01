@@ -13,9 +13,13 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import ReactPlayer from "react-player";
+import "./index.css";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+const language = "en";
 function Media(props) {
   const { loading, data } = props;
-  console.log("data", data);
   return (
     <Card>
       <CardHeader
@@ -28,10 +32,7 @@ function Media(props) {
               height={40}
             />
           ) : (
-            <Avatar
-              alt="Ted talk"
-              src="https://pbs.twimg.com/profile_images/877631054525472768/Xp5FAPD5_reasonably_small.jpg"
-            />
+            <Avatar alt={data.name} src={data.profileURL} />
           )
         }
         action={
@@ -50,7 +51,7 @@ function Media(props) {
               style={{ marginBottom: 6 }}
             />
           ) : (
-            "Ted"
+            data.name
           )
         }
         subheader={
@@ -91,11 +92,7 @@ function Media(props) {
             <Skeleton animation="wave" height={10} width="80%" />
           </React.Fragment>
         ) : (
-          <Typography
-            variant="body2"
-            component="p"
-            sx={{ color: "text.secondary" }}
-          >
+          <Typography variant="body2" component="p" className="title">
             {data.title}
           </Typography>
         )}
@@ -115,11 +112,62 @@ function Media(props) {
             variant="body2"
             component="p"
             sx={{ color: "text.secondary" }}
+            className="details"
           >
             {data?.details}
           </Typography>
         )}
       </CardContent>
+      <div className="card-footer">
+        <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
+          {loading ? (
+            <React.Fragment>
+              <Skeleton animation="wave" height={50} width={50} />
+            </React.Fragment>
+          ) : (
+            <div className="footer-box">
+              <ThumbUpOutlinedIcon />
+              <p>
+                {Intl.NumberFormat(language, { notation: "compact" }).format(
+                  data?.likes?.length
+                )}
+              </p>
+            </div>
+          )}
+        </CardContent>
+        <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
+          {loading ? (
+            <React.Fragment>
+              <Skeleton animation="wave" height={50} width={50} />
+            </React.Fragment>
+          ) : (
+            <div className="footer-box">
+              <CommentOutlinedIcon />
+              <p>
+                {Intl.NumberFormat(language, { notation: "compact" }).format(
+                  data?.comments?.length
+                )}
+              </p>
+            </div>
+          )}
+        </CardContent>
+        <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
+          {loading ? (
+            <React.Fragment>
+              <Skeleton animation="wave" height={50} width={50} />
+            </React.Fragment>
+          ) : (
+            <div className="footer-box">
+              <ShareOutlinedIcon />
+              <p>
+                {Intl.NumberFormat(language, { notation: "compact" }).format(
+                  data?.share
+                )}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </div>
     </Card>
   );
 }
@@ -131,7 +179,7 @@ Media.propTypes = {
 export default function CardCom({ data, loading }) {
   return (
     <div>
-      <Box sx={{ flexGrow: 1 }}     style={{ padding: "20px" }}>
+      <Box sx={{ flexGrow: 1 }} style={{ padding: "20px" }}>
         <Grid container spacing={2}>
           {(loading ? Array.from(new Array(18)) : data).map((item, index) => (
             <Grid size={{ xl: 2, lg: 3, md: 4, sm: 6, xs: 12 }} key={index}>
