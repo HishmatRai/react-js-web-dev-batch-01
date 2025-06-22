@@ -29,6 +29,7 @@ function Navbar() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLogin(true);
+        console.log(user.uid)
         const userData = onSnapshot(doc(db, "users", user.uid), (doc) => {
           setName(doc.data().name);
           setProfileURL(doc.data().profileURL);

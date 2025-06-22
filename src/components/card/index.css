@@ -25,3 +25,6 @@
 .footer-box>p{
     margin-left: 5px;
 }
+.card{
+    cursor: pointer;
+}

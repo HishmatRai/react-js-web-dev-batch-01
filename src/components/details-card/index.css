@@ -1,0 +1,10 @@
+.title-2{
+      font-weight: 500 !important;
+}
+.like-btn{
+    background: none !important;
+    color: black !important;
+}
+.like-btn>p{
+    margin-left: 15px;
+}

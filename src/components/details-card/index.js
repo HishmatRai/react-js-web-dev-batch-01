@@ -11,25 +11,26 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Skeleton from "@mui/material/Skeleton";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import moment from "moment";
 import ReactPlayer from "react-player";
-import "./index.css";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import BasicModal from "../basic-modal";
+import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
+import "./index.css";
 const language = "en";
 function Media(props) {
   const navigate = useNavigate();
-  const { loading, data, uid } = props;
+  const { loading, data, uid, likeHandler } = props;
   const isLiked = data?.likes?.includes(uid);
   return (
-    <Card
-      className="card"
-      onClick={() => !loading && navigate(`blog-details/${data?.blogID}`)}
-    >
+    <Card>
       <CardHeader
         avatar={
           loading ? (
@@ -40,7 +41,7 @@ function Media(props) {
               height={40}
             />
           ) : (
-            <Avatar alt={data.name} src={data.profileURL} />
+            <Avatar alt={data?.name} src={data?.profileURL} />
           )
         }
         action={
@@ -59,32 +60,32 @@ function Media(props) {
               style={{ marginBottom: 6 }}
             />
           ) : (
-            data.name
+            data?.name
           )
         }
         subheader={
           loading ? (
             <Skeleton animation="wave" height={10} width="40%" />
           ) : (
-            moment(data.createdAt).fromNow()
+            moment(data?.createdAt).fromNow()
           )
         }
       />
       {loading ? (
-        <Skeleton sx={{ height: 200 }} animation="wave" variant="rectangular" />
+        <Skeleton sx={{ height: 500 }} animation="wave" variant="rectangular" />
       ) : (
         <div>
-          {data.fileType === "image" ? (
-            <CardMedia component="img" height="200" image={data.fileURL} />
+          {data?.fileType === "image" ? (
+            <CardMedia component="img" height="500" image={data?.fileURL} />
           ) : (
             <ReactPlayer
               style={{
                 borderRadius: "5px",
               }}
               width={"100%"}
-              height={"200px"}
+              height={"500px"}
               controls={true}
-              url={data.fileURL}
+              url={data?.fileURL}
             />
           )}
         </div>
@@ -100,8 +101,8 @@ function Media(props) {
             <Skeleton animation="wave" height={10} width="80%" />
           </React.Fragment>
         ) : (
-          <Typography variant="body2" component="p" className="title">
-            {data.title}
+          <Typography variant="body2" component="p" className="title-2">
+            {data?.title}
           </Typography>
         )}
       </CardContent>
@@ -120,7 +121,6 @@ function Media(props) {
             variant="body2"
             component="p"
             sx={{ color: "text.secondary" }}
-            className="details"
           >
             {data?.details}
           </Typography>
@@ -130,28 +130,35 @@ function Media(props) {
         <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
           {loading ? (
             <React.Fragment>
-              <Skeleton animation="wave" height={50} width={50} />
+              <Skeleton animation="wave" height={50} width={150} />
             </React.Fragment>
           ) : (
             <div className="footer-box">
-              {isLiked ? (
-                <ThumbUpIcon style={{ color: "#1976d2" }} />
-              ) : (
-                <ThumbUpOutlinedIcon />
-              )}
-
-              <p>
-                {Intl.NumberFormat(language, { notation: "compact" }).format(
-                  data?.likes?.length
+              <Button
+                variant="contained"
+                disableElevation
+                className="like-btn"
+                onClick={likeHandler}
+              >
+                {isLiked ? (
+                  <ThumbUpIcon style={{ color: "#1976d2" }} />
+                ) : (
+                  <ThumbUpOutlinedIcon />
                 )}
-              </p>
+
+                <p>
+                  {Intl.NumberFormat(language, { notation: "compact" }).format(
+                    data?.likes?.length
+                  )}
+                </p>
+              </Button>
             </div>
           )}
         </CardContent>
         <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
           {loading ? (
             <React.Fragment>
-              <Skeleton animation="wave" height={50} width={50} />
+              <Skeleton animation="wave" height={50} width={150} />
             </React.Fragment>
           ) : (
             <div className="footer-box">
@@ -167,7 +174,7 @@ function Media(props) {
         <CardContent style={{ paddingTop: "0px", paddingBottom: "10px" }}>
           {loading ? (
             <React.Fragment>
-              <Skeleton animation="wave" height={50} width={50} />
+              <Skeleton animation="wave" height={50} width={150} />
             </React.Fragment>
           ) : (
             <div className="footer-box">
@@ -189,26 +196,60 @@ Media.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default function CardCom({ data, loading }) {
+export default function CardDetails({ data, loading }) {
   const auth = getAuth();
-  const [uid, setUid] = useState();
+  const db = getFirestore()
+  const [uid, setUid] = useState(null);
+  const [alredyLogin, setAlradyLogin] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUid(user.uid);
+        setAlradyLogin(true);
+      } else {
+        setUid(null);
+        setAlradyLogin(false);
       }
     });
   }, []);
+  // likeHandler
+  const likeHandler = async () => {
+    if (alredyLogin) {
+      let likes = data?.likes;
+      const isLiked = likes?.includes(uid);
+      if (isLiked) {
+        // remove
+        for (let index in likes) {
+          if (likes[index] === uid) {
+            likes.splice(index, 1);
+            break;
+          }
+        }
+      } else {
+        // add
+        likes.push(uid);
+      }
+      // update data
+      const blogRef = doc(db, "blogs", data.blogID);
+      await updateDoc(blogRef, {
+       likes:likes
+      });
+    } else {
+      setModalOpen(true);
+    }
+  };
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }} style={{ padding: "20px" }}>
-        <Grid container spacing={2}>
-          {(loading ? Array.from(new Array(18)) : data).map((item, index) => (
-            <Grid size={{ xl: 2, lg: 3, md: 4, sm: 6, xs: 12 }} key={index}>
-              <Media loading={loading} data={item} uid={uid} />
-            </Grid>
-          ))}
-        </Grid>
+        <Media
+          loading={loading}
+          data={data}
+          uid={uid}
+          likeHandler={likeHandler}
+        />
+        <BasicModal open={modalOpen} handleClose={() => setModalOpen(false)} />
       </Box>
     </div>
   );

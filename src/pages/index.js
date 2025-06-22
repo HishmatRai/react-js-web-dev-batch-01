@@ -6,6 +6,7 @@ import EmailVerification from "./email-verification";
 import Profile from "./profile";
 import CreateBlog from "./create-blog";
 import Dashboard from "./dashboard";
+import BlogDetails from "./blog-details";
 export {
   Home,
   Login,
@@ -15,4 +16,5 @@ export {
   Profile,
   CreateBlog,
   Dashboard,
+  BlogDetails,
 };
