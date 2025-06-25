@@ -321,7 +321,13 @@ export default function CardDetails({ data, loading, path }) {
           onClick={shareHandler}
         >
           <TwitterIcon size={32} round={true} />
-        </TwitterShareButton>
+        </TwitterShareButton>{" "}
+        <WhatsappShareButton
+          url={`https://react-js-web-dev-batch-01.vercel.app/blog-details/${path}`}
+          onClick={shareHandler}
+        >
+          <WhatsappIcon size={32} round={true} />
+        </WhatsappShareButton>
         <br />
         <br />
         <p>
