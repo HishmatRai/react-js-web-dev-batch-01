@@ -22,57 +22,14 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicModal from "../basic-modal";
+import TextField from "@mui/material/TextField";
 import {
-  EmailShareButton,
   FacebookShareButton,
-  GabShareButton,
-  HatenaShareButton,
-  InstapaperShareButton,
-  LineShareButton,
-  LinkedinShareButton,
-  LivejournalShareButton,
-  MailruShareButton,
-  OKShareButton,
-  PinterestShareButton,
-  PocketShareButton,
-  RedditShareButton,
-  TelegramShareButton,
-  ThreadsShareButton,
-  TumblrShareButton,
   TwitterShareButton,
-  ViberShareButton,
-  VKShareButton,
   WhatsappShareButton,
-  WorkplaceShareButton,
 } from "react-share";
 
-import {
-  EmailIcon,
-  FacebookIcon,
-  FacebookMessengerIcon,
-  GabIcon,
-  HatenaIcon,
-  InstapaperIcon,
-  LineIcon,
-  LinkedinIcon,
-  LivejournalIcon,
-  MailruIcon,
-  OKIcon,
-  PinterestIcon,
-  PocketIcon,
-  RedditIcon,
-  TelegramIcon,
-  ThreadsIcon,
-  TumblrIcon,
-  TwitterIcon,
-  ViberIcon,
-  VKIcon,
-  WeiboIcon,
-  WhatsappIcon,
-  WorkplaceIcon,
-  XIcon,
-  BlueskyIcon,
-} from "react-share";
+import { FacebookIcon, TwitterIcon, WhatsappIcon } from "react-share";
 import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
 import "./index.css";
 const language = "en";
@@ -333,6 +290,29 @@ export default function CardDetails({ data, loading, path }) {
         <p>
           URL : https://react-js-web-dev-batch-01.vercel.app/blog-details/{path}
         </p>
+        <br />
+        <h1 style={{marginBottom:"20px"}}>{data?.comments?.length} Comments</h1>
+        <Grid container spacing={2}>
+          <Grid size={{ xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" style={{width:100,height:100}}/>
+          </Grid>
+          <Grid size={{ xl: 11, lg: 11, md: 11, sm: 11, xs: 11 }}>
+            <TextField
+              id="outlined-textarea"
+              label="Add a comment ..."
+              placeholder="Add a comment ..."
+              multiline
+              style={{ marginTop: "15px", width: "100%" }}
+              rows={7}
+              // value={details}
+              // onChange={(e) => setDetails(e.target.value)}
+            />
+          </Grid>
+        </Grid>
+        <div className="comment-footer">
+        <Button variant="contained" disabled>Comment</Button>
+
+        </div>
         <BasicModal open={modalOpen} handleClose={() => setModalOpen(false)} />
       </Box>
     </div>

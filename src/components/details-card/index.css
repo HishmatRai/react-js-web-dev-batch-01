@@ -1,10 +1,17 @@
-.title-2{
-      font-weight: 500 !important;
+.title-2 {
+  font-weight: 500 !important;
 }
-.like-btn{
-    background: none !important;
-    color: black !important;
+.like-btn {
+  background: none !important;
+  color: black !important;
 }
-.like-btn>p{
-    margin-left: 15px;
+.like-btn > p {
+  margin-left: 15px;
+}
+.comment-footer {
+  display: flex;
+  align-self: center;
+
+  justify-content: flex-end;
+  margin-top: 10px;
 }
