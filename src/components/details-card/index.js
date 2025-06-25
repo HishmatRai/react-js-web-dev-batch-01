@@ -22,6 +22,57 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicModal from "../basic-modal";
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  GabShareButton,
+  HatenaShareButton,
+  InstapaperShareButton,
+  LineShareButton,
+  LinkedinShareButton,
+  LivejournalShareButton,
+  MailruShareButton,
+  OKShareButton,
+  PinterestShareButton,
+  PocketShareButton,
+  RedditShareButton,
+  TelegramShareButton,
+  ThreadsShareButton,
+  TumblrShareButton,
+  TwitterShareButton,
+  ViberShareButton,
+  VKShareButton,
+  WhatsappShareButton,
+  WorkplaceShareButton,
+} from "react-share";
+
+import {
+  EmailIcon,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  GabIcon,
+  HatenaIcon,
+  InstapaperIcon,
+  LineIcon,
+  LinkedinIcon,
+  LivejournalIcon,
+  MailruIcon,
+  OKIcon,
+  PinterestIcon,
+  PocketIcon,
+  RedditIcon,
+  TelegramIcon,
+  ThreadsIcon,
+  TumblrIcon,
+  TwitterIcon,
+  ViberIcon,
+  VKIcon,
+  WeiboIcon,
+  WhatsappIcon,
+  WorkplaceIcon,
+  XIcon,
+  BlueskyIcon,
+} from "react-share";
 import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
 import "./index.css";
 const language = "en";
@@ -196,9 +247,9 @@ Media.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default function CardDetails({ data, loading }) {
+export default function CardDetails({ data, loading, path }) {
   const auth = getAuth();
-  const db = getFirestore()
+  const db = getFirestore();
   const [uid, setUid] = useState(null);
   const [alredyLogin, setAlradyLogin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -233,13 +284,21 @@ export default function CardDetails({ data, loading }) {
       // update data
       const blogRef = doc(db, "blogs", data.blogID);
       await updateDoc(blogRef, {
-       likes:likes
+        likes: likes,
       });
     } else {
       setModalOpen(true);
     }
   };
-
+  // share
+  const shareHandler = async () => {
+    let share = data?.share;
+    share += 1;
+    const blogRef = doc(db, "blogs", data?.blogID);
+    await updateDoc(blogRef, {
+      share: share,
+    });
+  };
   return (
     <div>
       <Box sx={{ flexGrow: 1 }} style={{ padding: "20px" }}>
@@ -249,6 +308,25 @@ export default function CardDetails({ data, loading }) {
           uid={uid}
           likeHandler={likeHandler}
         />
+        <br />
+        <br />
+        <FacebookShareButton
+          url={`https://react-js-web-dev-batch-01.vercel.app/blog-details/${path}`}
+          onClick={shareHandler}
+        >
+          <FacebookIcon size={32} round={true} />
+        </FacebookShareButton>{" "}
+        <TwitterShareButton
+          url={`https://react-js-web-dev-batch-01.vercel.app/blog-details/${path}`}
+          onClick={shareHandler}
+        >
+          <TwitterIcon size={32} round={true} />
+        </TwitterShareButton>
+        <br />
+        <br />
+        <p>
+          URL : https://react-js-web-dev-batch-01.vercel.app/blog-details/{path}
+        </p>
         <BasicModal open={modalOpen} handleClose={() => setModalOpen(false)} />
       </Box>
     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, CardDetails} from "../../components";
+import { Navbar, CardDetails } from "../../components";
 import { onSnapshot, getFirestore, getDoc, doc } from "firebase/firestore";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -45,7 +45,7 @@ const BlogDetails = () => {
             <ArrowBackIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <CardDetails loading={loading} data={blog} />
+        <CardDetails loading={loading} data={blog} path={path} />
       </Box>
     </div>
   );
