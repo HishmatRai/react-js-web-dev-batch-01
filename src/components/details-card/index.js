@@ -23,6 +23,8 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicModal from "../basic-modal";
 import TextField from "@mui/material/TextField";
+import CommentList from "../comment-section";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -210,14 +212,22 @@ export default function CardDetails({ data, loading, path }) {
   const [uid, setUid] = useState(null);
   const [alredyLogin, setAlradyLogin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [user, setUser] = useState({});
+  const [commentRes, setCommentRes] = useState(false);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUid(user.uid);
         setAlradyLogin(true);
+        // user
+        const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
+          setUser({ ...doc.data() });
+        });
       } else {
         setUid(null);
         setAlradyLogin(false);
+        setUser({});
       }
     });
   }, []);
@@ -256,6 +266,32 @@ export default function CardDetails({ data, loading, path }) {
       share: share,
     });
   };
+
+  // comment
+  const commentHandler = async () => {
+    if (alredyLogin) {
+      setCommentRes(true);
+      let comments = data?.comments;
+      comments.push({
+        commentText: commentText,
+        createdAt: moment().format(),
+        uid: uid,
+      });
+      const blogRef = doc(db, "blogs", data?.blogID);
+      await updateDoc(blogRef, {
+        comments: comments,
+      })
+        .then(() => {
+          setCommentRes(false);
+          setCommentText("");
+        })
+        .catch(() => {
+          setCommentRes(false);
+        });
+    } else {
+      setModalOpen(true);
+    }
+  };
   return (
     <div>
       <Box sx={{ flexGrow: 1 }} style={{ padding: "20px" }}>
@@ -291,10 +327,16 @@ export default function CardDetails({ data, loading, path }) {
           URL : https://react-js-web-dev-batch-01.vercel.app/blog-details/{path}
         </p>
         <br />
-        <h1 style={{marginBottom:"20px"}}>{data?.comments?.length} Comments</h1>
+        <h1 style={{ marginBottom: "20px" }}>
+          {data?.comments?.length} Comments
+        </h1>
         <Grid container spacing={2}>
           <Grid size={{ xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" style={{width:100,height:100}}/>
+            <Avatar
+              alt={user?.name}
+              src={user?.profileURL}
+              style={{ width: 100, height: 100 }}
+            />
           </Grid>
           <Grid size={{ xl: 11, lg: 11, md: 11, sm: 11, xs: 11 }}>
             <TextField
@@ -304,15 +346,25 @@ export default function CardDetails({ data, loading, path }) {
               multiline
               style={{ marginTop: "15px", width: "100%" }}
               rows={7}
-              // value={details}
-              // onChange={(e) => setDetails(e.target.value)}
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
             />
           </Grid>
         </Grid>
         <div className="comment-footer">
-        <Button variant="contained" disabled>Comment</Button>
-
+          <Button
+            variant="contained"
+            onClick={commentHandler}
+            disabled={commentText === "" ? true : false}
+          >
+            {commentRes ? (
+              <CircularProgress style={{ color: "white" }} size={20} />
+            ) : (
+              "Comment"
+            )}
+          </Button>
         </div>
+        <CommentList data={data?.comments} />
         <BasicModal open={modalOpen} handleClose={() => setModalOpen(false)} />
       </Box>
     </div>
