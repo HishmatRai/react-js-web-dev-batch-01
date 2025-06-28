@@ -7,7 +7,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import moment from "moment";
-import { doc, onSnapshot, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 export default function CommentList({ data }) {
   const db = getFirestore();
@@ -20,18 +20,23 @@ export default function CommentList({ data }) {
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
   let commetsData = [];
-  for (let index in sortComments) {
-    // get data
-    console.log("sortComments[index]", sortComments[index]);
-    const unsub = onSnapshot(
-      doc(db, "users", sortComments[index].uid),
-      (doc) => {
-        commetsData.push({ ...sortComments[index], ...doc.data() });
-        console.log("Current data: ", doc.data());
+  const fetchData = async () => {
+    for (let index in sortComments) {
+      const userRef = doc(db, "users", sortComments[index].uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        commetsData.push({
+          ...sortComments[index],
+          ...userSnap.data(),
+        });
       }
-    );
-  }
-  //   console.log("sortComments", sortComments);
+    }
+
+    console.log("commetsData", commetsData);
+  };
+
+  fetchData();
+  console.log("commetsData", commetsData);
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
       {sortComments?.map((val, index) => {
