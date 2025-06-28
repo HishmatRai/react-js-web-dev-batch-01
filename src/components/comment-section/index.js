@@ -9,37 +9,46 @@ import Typography from "@mui/material/Typography";
 import moment from "moment";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 
-export default function CommentList({ data }) {
+export default function CommentList(props) {
+  // console.log("------------data----------------", data);
   const db = getFirestore();
-  //   const [comments, setComments] = useState([data]);
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    setComments(...props?.data);
+  }, []);
   //   useEffect(() => {
   //     setComments([...data]);
   //   }, []);
   //   console.log("comments-----------------",comments)
-  let sortComments = data?.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-  let commetsData = [];
-  const fetchData = async () => {
-    for (let index in sortComments) {
-      const userRef = doc(db, "users", sortComments[index].uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        commetsData.push({
-          ...sortComments[index],
-          ...userSnap.data(),
-        });
-      }
-    }
+  // let sortComments = data?.sort(
+  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  // );
+  // let commetsData = [];
+  // const fetchData = async () => {
+  //   for (let index in data) {
+  //     const userRef = doc(db, "users", data[index].uid);
+  //     const userSnap = await getDoc(userRef);
+  //     if (userSnap.exists()) {
+  //       commetsData.push({
+  //         ...data[index],
+  //         ...userSnap.data(),
+  //       });
+  //     }
+  //   }
+  //   setComments([...commetsData]);
+  // };
+  // let sortComments = commetsData?.sort(
+  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  // );
 
-    console.log("commetsData", commetsData);
-  };
+  // setComments([...sortComments])
 
-  fetchData();
-  console.log("commetsData", commetsData);
+  // fetchData();
+  // console.log("comments", comments);
+  const commetsData = [];
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {sortComments?.map((val, index) => {
+      {commetsData?.map((val, index) => {
         return (
           <div key={index}>
             <ListItem alignItems="flex-start">
