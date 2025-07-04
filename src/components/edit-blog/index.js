@@ -16,8 +16,18 @@ import TextField from "@mui/material/TextField";
 import ReactPlayer from "react-player";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
+import LinearProgressWithLabel from "../progress-with-label";
+import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 export default function EditBlog({ open, handleClose, data }) {
   console.log("------------------- edit data", data);
+  const db = getFirestore();
+  const storage = getStorage();
   const [uploadStart, setUploadStart] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fileProgress, setFileProgress] = useState(0);
@@ -34,34 +44,70 @@ export default function EditBlog({ open, handleClose, data }) {
     }
   }, [data]);
 
-  const createBlogHandler = async () => {
-      if (fileURL === "") {
-        toast("File required!", { type: "error" });
-      } else if (title === "") {
-        toast("Title required!", { type: "error" });
-      } else if (title.length < 100) {
-        toast("Title required (100)", { type: "error" });
-      } else if (details === "") {
-        toast("Details required!", { type: "error" });
-      } else if (details.length < 250) {
-        toast("Details required (250)", { type: "error" });
-      } else {
-        setLoading(true);
-        const newBlog = {
-          title: title,
-          details: details,
-          fileType: fileType,
-        };
-        // const docRef = await addDoc(collection(db, "blogs"), newBlog);
-        // const blogRef = doc(db, "blogs", docRef.id);
-        // await updateDoc(blogRef, {
-        //   blogID: docRef.id,
-        // });
-        // toast("New blog created", { type: "success" });
-        // setLoading(false);
-        // window.location.reload();
-      }
-    };
+  const updateBlogHandler = async () => {
+    if (fileURL === "") {
+      toast("File required!", { type: "error" });
+    } else if (title === "") {
+      toast("Title required!", { type: "error" });
+    } else if (title.length < 100) {
+      toast("Title required (100)", { type: "error" });
+    } else if (details === "") {
+      toast("Details required!", { type: "error" });
+    } else if (details.length < 250) {
+      toast("Details required (250)", { type: "error" });
+    } else {
+      setLoading(true);
+
+      const blogRef = doc(db, "blogs", data?.blogID);
+      await updateDoc(blogRef, {
+        title: title,
+        details: details,
+      });
+      toast("Updated", { type: "success" });
+      setLoading(false);
+    }
+  };
+
+  // upload file
+  const uploadBlogFile = (e) => {
+    const file = e.target.files[0];
+    if (
+      file.type.slice(0, 5) === "image" ||
+      file.type.slice(0, 5) === "video"
+    ) {
+      setUploadStart(true);
+
+      const storageRef = ref(storage, `blog-files/${data?.fileID}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          setFileProgress(progress);
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            console.log("File available at", downloadURL);
+            // setFileURL(downloadURL);
+            // setFileType(file.type.slice(0, 5));
+            const blogRef = doc(db, "blogs", data?.blogID);
+            await updateDoc(blogRef, {
+              fileType: file.type.slice(0, 5),
+              fileURL: downloadURL,
+            });
+            setUploadStart(false);
+          });
+        }
+      );
+    } else {
+      toast("File name image required", { type: "error" });
+    }
+  };
   return (
     <React.Fragment>
       <Dialog fullWidth={true} maxWidth="xl" open={open} onClose={handleClose}>
@@ -80,7 +126,7 @@ export default function EditBlog({ open, handleClose, data }) {
             label=""
             variant="outlined"
             style={{ marginTop: "15px" }}
-            // onChange={(e) => uploadBlogFile(e)}
+            onChange={(e) => uploadBlogFile(e)}
           />
           {fileType !== "" && (
             <div>
@@ -107,7 +153,7 @@ export default function EditBlog({ open, handleClose, data }) {
               )}
             </div>
           )}
-
+          <LinearProgressWithLabel show={uploadStart} progress={fileProgress} />
           <TextField
             id="outlined-basic"
             label="Title"
@@ -152,12 +198,12 @@ export default function EditBlog({ open, handleClose, data }) {
             variant="contained"
             disableElevation
             style={{ marginTop: "15px" }}
-            // onClick={createBlogHandler}
+            onClick={updateBlogHandler}
           >
             {loading ? (
               <CircularProgress style={{ color: "white" }} size={20} />
             ) : (
-              "Create"
+              "Update"
             )}
           </Button>
         </Box>

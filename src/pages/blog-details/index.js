@@ -45,7 +45,12 @@ const BlogDetails = () => {
             <ArrowBackIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <CardDetails loading={loading} data={blog} path={path} />
+        <CardDetails
+          loading={loading}
+          data={blog}
+          path={path}
+          edit={routerLocation?.state?.edit}
+        />
       </Box>
     </div>
   );

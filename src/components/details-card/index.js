@@ -80,7 +80,6 @@ function Media(props) {
             moment(data?.createdAt).fromNow()
           )
         }
-        
       />
       {loading ? (
         <Skeleton sx={{ height: 500 }} animation="wave" variant="rectangular" />
@@ -207,7 +206,7 @@ Media.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default function CardDetails({ data, loading, path }) {
+export default function CardDetails({ data, loading, path ,edit}) {
   const auth = getAuth();
   const db = getFirestore();
   const [uid, setUid] = useState(null);
@@ -216,8 +215,7 @@ export default function CardDetails({ data, loading, path }) {
   const [commentText, setCommentText] = useState("");
   const [user, setUser] = useState({});
   const [commentRes, setCommentRes] = useState(false);
-  const [open, setOpen] = React.useState(true);
-  const routerlocation = useLocation();
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -305,8 +303,10 @@ export default function CardDetails({ data, loading, path }) {
           uid={uid}
           likeHandler={likeHandler}
         />
-        {routerlocation?.state?.edit && <Button onClick={()=>setOpen(true)}>Edit</Button>}
-        <EditBlog open={open} handleClose={()=> setOpen(false)} data={data}/>
+        {edit && (
+          <Button onClick={() => setOpen(true)}>Edit</Button>
+        )}
+        <EditBlog open={open} handleClose={() => setOpen(false)} data={data} />
         <br />
         <br />
         <FacebookShareButton
