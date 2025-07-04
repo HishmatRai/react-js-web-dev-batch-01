@@ -25,26 +25,24 @@ const Dashboard = () => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         if (user.emailVerified) {
-          const q = query(
-            collection(db, "blogs"),
-            where("userID", "==", user.uid)
-          );
-          const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const newBlogs = [];
-            const fetchData = async () => {
-              for (const blogRes of querySnapshot.docs) {
-                const blogData = blogRes.data();
-                const userRef = doc(db, "users", blogData.userID);
-                const UserSnap = await getDoc(userRef);
-                const userData = UserSnap.data();
-                newBlogs.push({ ...blogData, ...userData });
-              }
-              setBlogs([...newBlogs]);
-              setLoading(false);
-            };
 
-            fetchData();
-          });
+             const q = query(collection(db, "blogs"), where("userID", "==", user.uid));
+              const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const newBlogs = [];
+                const fetchData = async () => {
+                  for (const blogRes of querySnapshot.docs) {
+                    const blogData = blogRes.data();
+                    const userRef = doc(db, "users", blogData.userID);
+                    const UserSnap = await getDoc(userRef);
+                    const userData = UserSnap.data();
+                    newBlogs.push({ ...blogData, ...userData });
+                  }
+                  setBlogs([...newBlogs]);
+                  setLoading(false);
+                };
+          
+                fetchData();
+              });
         } else {
           navigate("/email-verification");
         }
@@ -93,7 +91,7 @@ const Dashboard = () => {
           <h1>Data Not Found!</h1>
         </Box>
       ) : (
-        <Card data={filteredData} loading={loading} />
+        <Card data={filteredData} loading={loading} edit={true}/>
       )}
     </div>
   );

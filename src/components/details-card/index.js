@@ -19,7 +19,7 @@ import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicModal from "../basic-modal";
 import TextField from "@mui/material/TextField";
@@ -30,7 +30,7 @@ import {
   TwitterShareButton,
   WhatsappShareButton,
 } from "react-share";
-
+import EditBlog from "../edit-blog";
 import { FacebookIcon, TwitterIcon, WhatsappIcon } from "react-share";
 import { doc, onSnapshot, getFirestore, updateDoc } from "firebase/firestore";
 import "./index.css";
@@ -80,6 +80,7 @@ function Media(props) {
             moment(data?.createdAt).fromNow()
           )
         }
+        
       />
       {loading ? (
         <Skeleton sx={{ height: 500 }} animation="wave" variant="rectangular" />
@@ -215,6 +216,9 @@ export default function CardDetails({ data, loading, path }) {
   const [commentText, setCommentText] = useState("");
   const [user, setUser] = useState({});
   const [commentRes, setCommentRes] = useState(false);
+  const [open, setOpen] = React.useState(true);
+  const routerlocation = useLocation();
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -301,6 +305,8 @@ export default function CardDetails({ data, loading, path }) {
           uid={uid}
           likeHandler={likeHandler}
         />
+        {routerlocation?.state?.edit && <Button onClick={()=>setOpen(true)}>Edit</Button>}
+        <EditBlog open={open} handleClose={()=> setOpen(false)} data={data}/>
         <br />
         <br />
         <FacebookShareButton

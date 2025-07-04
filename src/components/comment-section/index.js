@@ -9,54 +9,56 @@ import Typography from "@mui/material/Typography";
 import moment from "moment";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 
-export default function CommentList(props) {
+export default function CommentList({ data }) {
   // console.log("------------data----------------", data);
   const db = getFirestore();
   const [comments, setComments] = useState([]);
   useEffect(() => {
-    setComments(...props?.data);
-  }, []);
-  //   useEffect(() => {
-  //     setComments([...data]);
-  //   }, []);
-  //   console.log("comments-----------------",comments)
-  // let sortComments = data?.sort(
-  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  // );
-  // let commetsData = [];
-  // const fetchData = async () => {
-  //   for (let index in data) {
-  //     const userRef = doc(db, "users", data[index].uid);
-  //     const userSnap = await getDoc(userRef);
-  //     if (userSnap.exists()) {
-  //       commetsData.push({
-  //         ...data[index],
-  //         ...userSnap.data(),
-  //       });
-  //     }
-  //   }
-  //   setComments([...commetsData]);
-  // };
-  // let sortComments = commetsData?.sort(
-  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  // );
+    const fetchData = async () => {
+      const commentsData = [];
 
-  // setComments([...sortComments])
+      for (let item of data) {
+        try {
+          const userRef = doc(db, "users", item.uid);
+          const userSnap = await getDoc(userRef);
 
-  // fetchData();
-  // console.log("comments", comments);
-  const commetsData = [];
+          if (userSnap.exists()) {
+            commentsData.push({
+              ...item,
+              ...userSnap.data(),
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+
+      setComments(commentsData); // ✅ Update state
+    };
+
+    if (data && data.length > 0) {
+      fetchData();
+    }
+  }, [data]);
+
+
+  console.log("------------commentsddsds----------------", comments);
+
+  let sortComments = comments?.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {commetsData?.map((val, index) => {
+      {sortComments?.map((val, index) => {
         return (
           <div key={index}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                <Avatar alt={val?.name} src={val?.profileURL} />
               </ListItemAvatar>
               <ListItemText
-                primary="Name "
+                primary={val?.name}
                 secondary={
                   <React.Fragment>
                     <Typography

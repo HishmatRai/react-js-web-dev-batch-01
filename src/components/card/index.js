@@ -23,12 +23,18 @@ import { useNavigate } from "react-router-dom";
 const language = "en";
 function Media(props) {
   const navigate = useNavigate();
-  const { loading, data, uid } = props;
+  const { loading, data, uid, edit } = props;
+  console.log("-------------------edit", edit);
   const isLiked = data?.likes?.includes(uid);
   return (
     <Card
       className="card"
-      onClick={() => !loading && navigate(`blog-details/${data?.blogID}`)}
+      onClick={() =>
+        !loading &&
+        navigate(`/blog-details/${data?.blogID}`, { state: { edit: edit } })
+      }
+      // onClick={() => !loading && navigate('/')}
+      // onClick={() => alert("Fdf")}
     >
       <CardHeader
         avatar={
@@ -189,7 +195,7 @@ Media.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default function CardCom({ data, loading }) {
+export default function CardCom({ data, loading, edit }) {
   const auth = getAuth();
   const [uid, setUid] = useState();
   useEffect(() => {
@@ -205,7 +211,7 @@ export default function CardCom({ data, loading }) {
         <Grid container spacing={2}>
           {(loading ? Array.from(new Array(18)) : data).map((item, index) => (
             <Grid size={{ xl: 2, lg: 3, md: 4, sm: 6, xs: 12 }} key={index}>
-              <Media loading={loading} data={item} uid={uid} />
+              <Media loading={loading} data={item} uid={uid} edit={edit} />
             </Grid>
           ))}
         </Grid>
